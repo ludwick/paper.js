@@ -45,10 +45,11 @@ var SegmentPoint = Point.extend({
             this.setSelected(true);
     },
 
-    set: function(x, y) {
+    set: function(x, y, _dontNotify) {
         this._x = x;
         this._y = y;
-        this._owner._changed(this);
+        if (!_dontNotify)
+            this._owner._changed(this);
         return this;
     },
 

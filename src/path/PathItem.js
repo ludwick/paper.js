@@ -315,7 +315,7 @@ var PathItem = Item.extend(/** @lends PathItem# */{
                 && this._getWinding(point);
         return !!(this.getFillRule() === 'evenodd' ? winding & 1 : winding);
 /*#*/ } // !__options.nativeContains && __options.booleanOperations
-    }
+    },
 
     // TODO: Write about negative indices, and add an example for ranges.
     /**
@@ -466,6 +466,36 @@ var PathItem = Item.extend(/** @lends PathItem# */{
      * // Smooth a range, using negative indices:
      * paths[4].smooth({ type: 'continuous', from: -1, to: 1 });
      */
+
+
+    /**
+     * Interpolates between the two specified compound paths and uses the result
+     * as the geometry for this compound-path. The number of children and
+     * segments in all paths involved should be the same.
+     *
+     * @param {CompoundPath} pathFrom the compound path defining the geometry of
+     *     the resulting compound path when {@code factor} is 0.
+     * @param {CompoundPath} pathTo the compound path defining the geometry of
+     *     the resulting compound path when {@code factor} is 1.
+     * @param {Number} factor the interpolation coefficient, typically between 0
+     *     and 1, but extrapolation is possible too.
+     */
+    interpolate: function(pathFrom, pathTo, factor) {
+        var name = this._segments ? '_segments' : '_children';
+        var itemsFrom = pathFrom[name],
+            itemsTo = pathTo[name],
+            items = this[name],
+            length = items.length;
+        if (!itemsFrom || !itemsTo
+                || length !== itemsFrom.length
+                || length !== itemsTo.length)
+            throw new Error('Invalid operands in interpolate() call: ' +
+                    pathFrom + ', ' + pathTo);
+        for (var i = 0, l = length; i < l; i++) {
+            items[i].interpolate(itemsFrom[i], itemsTo[i], factor);
+        }
+        this._changed(/*#=*/Change.GEOMETRY);
+    }
 
     /**
      * {@grouptitle Postscript Style Drawing Commands}

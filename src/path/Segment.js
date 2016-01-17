@@ -591,21 +591,24 @@ var Segment = Base.extend(/** @lends Segment# */{
      * @param {Number} coef the interpolation coefficient, typically between
      * 0 and 1, but extrapolation is possible too.
      */
-    interpolate: function(segment0, segment1, coef) {
-        var dxPoint = segment1._point._x - segment0._point._x,
-            dyPoint = segment1._point._y - segment0._point._y,
-            dxHandleIn = segment1._handleIn._x - segment0._handleIn._x,
-            dyHandleIn = segment1._handleIn._y - segment0._handleIn._y,
-            dxHandleOut = segment1._handleOut._x - segment0._handleOut._x,
-            dyHandleOut = segment1._handleOut._y - segment0._handleOut._y;
-
-        this._point._x = segment0._point._x + dxPoint * coef;
-        this._point._y = segment0._point._y + dyPoint * coef;
-        this._handleIn._x = segment0._handleIn._x + dxHandleIn * coef;
-        this._handleIn._y = segment0._handleIn._y + dyHandleIn * coef;
-        this._handleOut._x = segment0._handleOut._x + dxHandleOut * coef;
-        this._handleOut._y = segment0._handleOut._y + dyHandleOut * coef;
-
+    interpolate: function(segmentFrom, segmentTo, factor) {
+        var u = 1 - factor,
+            v = factor,
+            point1 = segmentFrom._point,
+            point2 = segmentTo._point,
+            handleIn1 = segmentFrom._handleIn,
+            handleIn2 = segmentTo._handleIn,
+            handleOut2 = segmentTo._handleOut,
+            handleOut1 = segmentFrom._handleOut;
+        this._point.set(
+                u * point1._x + v * point2._x,
+                u * point1._y + v * point2._y, true);
+        this._handleIn.set(
+                u * handleIn1._x + v * handleIn2._x,
+                u * handleIn1._y + v * handleIn2._y, true);
+        this._handleOut.set(
+                u * handleOut1._x + v * handleOut2._x,
+                u * handleOut1._y + v * handleOut2._y, true);
         this._changed();
     },
 

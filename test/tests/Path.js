@@ -285,11 +285,11 @@ test('Path#interpolate', function() {
         });
 
     path.interpolate(path0, path1, 0);
-    equals( path.exportJSON(), path0.exportJSON() );
+    equals(path, path0);
 
     path.interpolate(path0, path1, 1);
-    equals( path.exportJSON(), path1.exportJSON() );
+    equals(path, path1);
 
     path.interpolate(path0, path1, 0.5);
-    equals( path.exportJSON(), expected.exportJSON() );
+    equals(path, expected);
 });
